@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AceMode · 桌面创作工作台原型</title>
+  <style>html,body{margin:0;min-height:100%;background:#ececef}body{padding:0}</style>
+</head>
+<body>
+<div id="acemode-desktop-prototype">
+  <style>
+    #acemode-desktop-prototype {
+      color-scheme: light dark;
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+      color: light-dark(#202126, #f1f1f3);
+      width: 100%;
+      padding: 12px;
+      box-sizing: border-box;
+    }
+    #acemode-desktop-prototype * { box-sizing: border-box; }
+    #acemode-desktop-prototype button,
+    #acemode-desktop-prototype textarea { font: inherit; }
+    #acemode-desktop-prototype button { cursor: pointer; }
+    #acemode-desktop-prototype .am-window {
+      width: 100%;
+      min-height: 760px;
+      overflow: hidden;
+      border-radius: 16px;
+      border: 1px solid light-dark(#d9d9dc, #34343b);
+      background: light-dark(#f7f7f8, #17171a);
+      box-shadow: 0 24px 70px rgba(20, 20, 25, .18);
+    }
+    #acemode-desktop-prototype .am-titlebar {
+      height: 44px;
+      display: grid;
+      grid-template-columns: 220px 1fr 220px;
+      align-items: center;
+      padding: 0 14px;
+      border-bottom: 1px solid light-dark(#e4e4e6, #303036);
+      background: light-dark(#fbfbfc, #1e1e22);
+      user-select: none;
+    }
+    #acemode-desktop-prototype .am-lights { display: flex; gap: 7px; }
+    #acemode-desktop-prototype .am-light { width: 11px; height: 11px; border-radius: 50%; }
+    #acemode-desktop-prototype .am-light:nth-child(1) { background: #ff5f57; }
+    #acemode-desktop-prototype .am-light:nth-child(2) { background: #febc2e; }
+    #acemode-desktop-prototype .am-light:nth-child(3) { background: #28c840; }
+    #acemode-desktop-prototype .am-title { text-align: center; font-size: 12px; color: light-dark(#77777e, #aaaab2); }
+    #acemode-desktop-prototype .am-system { display: flex; justify-content: flex-end; gap: 8px; align-items: center; font-size: 11px; }
+    #acemode-desktop-prototype .am-system span { display: inline-flex; align-items: center; gap: 5px; }
+    #acemode-desktop-prototype .am-dot { width: 6px; height: 6px; border-radius: 50%; background: #34b27b; }
+    #acemode-desktop-prototype .am-app {
+      min-height: 716px;
+      display: grid;
+      grid-template-columns: 228px minmax(430px, 1fr) 340px;
+    }
+    #acemode-desktop-prototype .am-sidebar {
+      padding: 16px 12px;
+      border-right: 1px solid light-dark(#e2e2e5, #303036);
+      background: light-dark(#f2f2f3, #1d1d21);
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    #acemode-desktop-prototype .am-brand { display: flex; align-items: center; gap: 9px; padding: 2px 8px 16px; font-weight: 720; letter-spacing: -.2px; }
+    #acemode-desktop-prototype .am-logo { width: 27px; height: 27px; display: grid; place-items: center; border-radius: 8px; background: #6d56e8; color: white; font-size: 14px; }
+    #acemode-desktop-prototype .am-new {
+      border: 0;
+      border-radius: 9px;
+      padding: 10px 12px;
+      color: white;
+      background: #6d56e8;
+      text-align: left;
+      font-weight: 650;
+      box-shadow: 0 5px 14px rgba(109, 86, 232, .2);
+    }
+    #acemode-desktop-prototype .am-side-label { margin: 20px 9px 8px; font-size: 10px; text-transform: uppercase; letter-spacing: 1.1px; color: light-dark(#919197, #85858e); }
+    #acemode-desktop-prototype .am-project {
+      width: 100%;
+      border: 0;
+      border-radius: 9px;
+      background: transparent;
+      color: inherit;
+      padding: 9px 10px;
+      text-align: left;
+      margin-bottom: 3px;
+    }
+    #acemode-desktop-prototype .am-project:hover { background: light-dark(#e8e8eb, #28282e); }
+    #acemode-desktop-prototype .am-project[aria-current="true"] { background: light-dark(#e5e1fa, #312d49); }
+    #acemode-desktop-prototype .am-project strong { display: block; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    #acemode-desktop-prototype .am-project small { display: block; margin-top: 3px; color: light-dark(#818188, #92929b); font-size: 10px; }
+    #acemode-desktop-prototype .am-side-bottom { margin-top: auto; }
+    #acemode-desktop-prototype .am-library {
+      width: 100%; border: 0; background: transparent; color: light-dark(#64646b, #b8b8c0); text-align: left; padding: 9px 10px; border-radius: 8px; font-size: 12px;
+    }
+    #acemode-desktop-prototype .am-profile { display: flex; align-items: center; gap: 9px; margin-top: 12px; padding: 12px 8px 2px; border-top: 1px solid light-dark(#dedee1, #323238); font-size: 11px; }
+    #acemode-desktop-prototype .am-avatar { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; background: #e4a47b; color: #402716; font-weight: 700; }
+    #acemode-desktop-prototype .am-center { min-width: 0; display: flex; flex-direction: column; background: light-dark(#fff, #18181b); }
+    #acemode-desktop-prototype .am-worktop {
+      min-height: 69px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 12px 22px;
+      border-bottom: 1px solid light-dark(#e8e8ea, #2e2e34);
+    }
+    #acemode-desktop-prototype .am-workname { min-width: 0; }
+    #acemode-desktop-prototype .am-workname strong { display: block; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    #acemode-desktop-prototype .am-workname small { color: light-dark(#888890, #92929b); font-size: 10px; }
+    #acemode-desktop-prototype .am-stages { display: flex; align-items: center; gap: 3px; }
+    #acemode-desktop-prototype .am-stage {
+      border: 0; background: transparent; color: light-dark(#85858d, #92929b); border-radius: 7px; padding: 6px 9px; font-size: 11px; white-space: nowrap;
+    }
+    #acemode-desktop-prototype .am-stage:hover { background: light-dark(#f1f1f3, #25252a); }
+    #acemode-desktop-prototype .am-stage[aria-selected="true"] { color: #6d56e8; background: light-dark(#efecff, #302b4b); font-weight: 680; }
+    #acemode-desktop-prototype .am-stage-sep { width: 14px; height: 1px; background: light-dark(#d9d9dd, #404047); }
+    #acemode-desktop-prototype .am-stage-body { flex: 1; min-height: 0; overflow: auto; }
+    #acemode-desktop-prototype .am-thread { max-width: 790px; margin: 0 auto; padding: 34px 34px 120px; }
+    #acemode-desktop-prototype .am-kicker { color: #6d56e8; font-size: 11px; font-weight: 700; letter-spacing: .4px; }
+    #acemode-desktop-prototype .am-heading { margin: 8px 0 10px; font-size: 25px; line-height: 1.25; letter-spacing: -.6px; }
+    #acemode-desktop-prototype .am-lead { margin: 0 0 28px; color: light-dark(#6e6e76, #aaaab2); line-height: 1.7; font-size: 13px; }
+    #acemode-desktop-prototype .am-message { display: grid; grid-template-columns: 28px 1fr; gap: 10px; margin: 22px 0; }
+    #acemode-desktop-prototype .am-message-icon { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 8px; background: light-dark(#eeeeef, #2c2c31); font-size: 11px; font-weight: 700; }
+    #acemode-desktop-prototype .am-message[data-role="ai"] .am-message-icon { background: #6d56e8; color: white; }
+    #acemode-desktop-prototype .am-message-content { padding-top: 3px; font-size: 13px; line-height: 1.7; }
+    #acemode-desktop-prototype .am-message-content strong { display: block; margin-bottom: 4px; }
+    #acemode-desktop-prototype .am-draft-summary { margin-top: 12px; border: 1px solid light-dark(#e4e4e7, #33333a); border-radius: 12px; overflow: hidden; background: light-dark(#fafafa, #202024); }
+    #acemode-desktop-prototype .am-draft-row { display: grid; grid-template-columns: 76px 1fr; gap: 12px; padding: 11px 13px; border-bottom: 1px solid light-dark(#e8e8eb, #303036); }
+    #acemode-desktop-prototype .am-draft-row:last-child { border-bottom: 0; }
+    #acemode-desktop-prototype .am-draft-row span:first-child { color: light-dark(#888890, #92929b); font-size: 11px; }
+    #acemode-desktop-prototype .am-draft-row span:last-child { font-size: 12px; }
+    #acemode-desktop-prototype .am-suggestions { display: flex; flex-wrap: wrap; gap: 7px; margin: 14px 0 0 38px; }
+    #acemode-desktop-prototype .am-suggestion { border: 1px solid light-dark(#dedee2, #3a3a42); border-radius: 18px; background: transparent; color: inherit; padding: 6px 10px; font-size: 11px; }
+    #acemode-desktop-prototype .am-suggestion:hover { border-color: #7b65e9; color: #6d56e8; }
+    #acemode-desktop-prototype .am-composer-wrap { position: sticky; bottom: 0; padding: 14px 28px 20px; background: linear-gradient(transparent, light-dark(#fff, #18181b) 24%); }
+    #acemode-desktop-prototype .am-composer { max-width: 760px; margin: 0 auto; padding: 10px 10px 9px 14px; border: 1px solid light-dark(#d9d9dd, #3a3a42); border-radius: 14px; background: light-dark(#fff, #202024); box-shadow: 0 10px 30px rgba(20,20,25,.09); }
+    #acemode-desktop-prototype .am-composer textarea { width: 100%; height: 45px; resize: none; border: 0; outline: 0; color: inherit; background: transparent; font-size: 12px; }
+    #acemode-desktop-prototype .am-compose-actions { display: flex; justify-content: space-between; align-items: center; }
+    #acemode-desktop-prototype .am-compose-actions small { color: light-dark(#8b8b92, #91919a); font-size: 10px; }
+    #acemode-desktop-prototype .am-send { width: 30px; height: 30px; border: 0; border-radius: 9px; background: #6d56e8; color: white; font-size: 15px; }
+    #acemode-desktop-prototype .am-inspector { min-width: 0; border-left: 1px solid light-dark(#e2e2e5, #303036); background: light-dark(#fafafa, #1d1d21); display: flex; flex-direction: column; }
+    #acemode-desktop-prototype .am-inspector-head { padding: 17px 18px 12px; border-bottom: 1px solid light-dark(#e5e5e7, #303036); }
+    #acemode-desktop-prototype .am-inspector-head strong { font-size: 13px; }
+    #acemode-desktop-prototype .am-inspector-head small { display: block; margin-top: 4px; color: light-dark(#818188, #92929b); font-size: 10px; }
+    #acemode-desktop-prototype .am-tabs { display: flex; gap: 3px; padding: 10px 13px 0; }
+    #acemode-desktop-prototype .am-tab { border: 0; background: transparent; color: light-dark(#818188, #9797a0); padding: 7px 9px; border-bottom: 2px solid transparent; font-size: 11px; }
+    #acemode-desktop-prototype .am-tab[aria-selected="true"] { color: #6d56e8; border-bottom-color: #6d56e8; font-weight: 680; }
+    #acemode-desktop-prototype .am-document { padding: 18px; overflow: auto; flex: 1; }
+    #acemode-desktop-prototype .am-document h3 { margin: 0 0 5px; font-size: 16px; line-height: 1.35; }
+    #acemode-desktop-prototype .am-document p { margin: 0 0 17px; color: light-dark(#64646c, #b4b4bc); font-size: 12px; line-height: 1.72; }
+    #acemode-desktop-prototype .am-section-label { display: flex; justify-content: space-between; align-items: center; margin: 18px 0 8px; font-size: 10px; color: light-dark(#888890, #94949d); text-transform: uppercase; letter-spacing: .8px; }
+    #acemode-desktop-prototype .am-status { display: inline-flex; align-items: center; gap: 5px; color: #2b9870; text-transform: none; letter-spacing: 0; }
+    #acemode-desktop-prototype .am-question { padding: 11px 0; border-bottom: 1px solid light-dark(#e7e7e9, #303036); font-size: 12px; line-height: 1.5; display: grid; grid-template-columns: 22px 1fr; gap: 7px; }
+    #acemode-desktop-prototype .am-qnum { width: 20px; height: 20px; display: grid; place-items: center; border-radius: 6px; color: #6d56e8; background: light-dark(#ece8ff, #302b4b); font-size: 9px; }
+    #acemode-desktop-prototype .am-confirm { margin: 18px; border: 0; border-radius: 10px; padding: 11px 13px; background: #6d56e8; color: white; font-weight: 670; }
+    #acemode-desktop-prototype .am-record-layout { min-height: 646px; display: grid; grid-template-columns: minmax(0,1fr) 260px; }
+    #acemode-desktop-prototype .am-camera-zone { padding: 24px; display: flex; flex-direction: column; min-width: 0; }
+    #acemode-desktop-prototype .am-camera { flex: 1; min-height: 420px; border-radius: 18px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 38%, #596078 0 7%, #343a4c 8% 14%, #1b1e28 35%, #11131a 100%); color: white; }
+    #acemode-desktop-prototype .am-camera-person { text-align: center; opacity: .9; }
+    #acemode-desktop-prototype .am-camera-person div { width: 76px; height: 76px; margin: 0 auto 12px; border-radius: 50%; background: rgba(255,255,255,.12); display: grid; place-items: center; font-size: 28px; }
+    #acemode-desktop-prototype .am-rec-badge { position: absolute; top: 16px; left: 16px; padding: 5px 8px; border-radius: 7px; background: rgba(0,0,0,.5); font-size: 10px; display: flex; align-items: center; gap: 6px; }
+    #acemode-desktop-prototype .am-rec-badge i { width: 7px; height: 7px; border-radius: 50%; background: #f24d56; }
+    #acemode-desktop-prototype .am-save-badge { position: absolute; top: 16px; right: 16px; padding: 5px 8px; border-radius: 7px; background: rgba(0,0,0,.5); font-size: 10px; }
+    #acemode-desktop-prototype .am-prompt { position: absolute; left: 6%; right: 6%; bottom: 26px; padding: 15px 18px; border: 1px solid rgba(255,255,255,.18); background: rgba(13,15,22,.78); backdrop-filter: blur(12px); border-radius: 13px; }
+    #acemode-desktop-prototype .am-prompt small { color: #bbbccb; font-size: 9px; text-transform: uppercase; letter-spacing: .8px; }
+    #acemode-desktop-prototype .am-prompt strong { display: block; margin-top: 5px; font-size: 18px; line-height: 1.4; }
+    #acemode-desktop-prototype .am-record-controls { display: flex; justify-content: center; align-items: center; gap: 10px; padding-top: 18px; }
+    #acemode-desktop-prototype .am-record-controls button { border: 1px solid light-dark(#dedee1, #3b3b43); border-radius: 10px; background: light-dark(#fff, #242429); color: inherit; padding: 9px 13px; font-size: 11px; }
+    #acemode-desktop-prototype .am-record-controls .am-record-main { background: #6d56e8; color: white; border-color: #6d56e8; padding: 11px 18px; }
+    #acemode-desktop-prototype .am-session-side { border-left: 1px solid light-dark(#e5e5e8, #303036); padding: 20px 16px; background: light-dark(#fafafa, #1d1d21); }
+    #acemode-desktop-prototype .am-session-side h3 { margin: 0 0 13px; font-size: 13px; }
+    #acemode-desktop-prototype .am-check { padding: 9px 0; border-bottom: 1px solid light-dark(#e7e7ea, #303036); display: flex; justify-content: space-between; gap: 8px; font-size: 11px; }
+    #acemode-desktop-prototype .am-check span:last-child { color: #2b9870; }
+    #acemode-desktop-prototype .am-queue { margin-top: 20px; }
+    #acemode-desktop-prototype .am-queue-item { padding: 9px 10px; margin: 4px 0; border-radius: 8px; color: light-dark(#73737a, #aaaab2); font-size: 11px; }
+    #acemode-desktop-prototype .am-queue-item[data-current="true"] { background: light-dark(#ebe7ff, #302b4b); color: #6d56e8; }
+    #acemode-desktop-prototype .am-review-layout { padding: 24px; display: grid; grid-template-columns: minmax(0,1fr) 270px; gap: 18px; }
+    #acemode-desktop-prototype .am-player { height: 370px; border-radius: 16px; background: linear-gradient(145deg,#202431,#0f1118); display: grid; place-items: center; color: white; position: relative; }
+    #acemode-desktop-prototype .am-play { width: 58px; height: 58px; border-radius: 50%; border: 1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.13); color: white; font-size: 19px; }
+    #acemode-desktop-prototype .am-caption { position: absolute; bottom: 28px; left: 15%; right: 15%; text-align: center; font-size: 13px; }
+    #acemode-desktop-prototype .am-timeline { margin-top: 13px; height: 54px; border-radius: 10px; background: light-dark(#ededf0, #25252b); padding: 9px; display: flex; gap: 4px; }
+    #acemode-desktop-prototype .am-clip { border: 0; border-radius: 6px; background: #8d7aeb; color: white; font-size: 9px; flex: 1; }
+    #acemode-desktop-prototype .am-clip:nth-child(2) { flex: 1.3; background: #6d56e8; }
+    #acemode-desktop-prototype .am-clip:nth-child(3) { flex: .8; background: #a89bea; }
+    #acemode-desktop-prototype .am-review-side { border: 1px solid light-dark(#e2e2e5, #34343b); border-radius: 14px; padding: 16px; background: light-dark(#fafafa, #202024); }
+    #acemode-desktop-prototype .am-review-side h3 { margin: 0 0 12px; font-size: 13px; }
+    #acemode-desktop-prototype .am-take { margin: 7px 0; border: 1px solid light-dark(#e2e2e5, #38383f); border-radius: 9px; padding: 10px; font-size: 11px; }
+    #acemode-desktop-prototype .am-take[data-selected="true"] { border-color: #7862e6; background: light-dark(#f0edff, #302b4b); }
+    #acemode-desktop-prototype .am-export-layout { max-width: 760px; margin: 0 auto; padding: 42px 32px; }
+    #acemode-desktop-prototype .am-export-box { border: 1px solid light-dark(#e1e1e4, #35353c); border-radius: 15px; padding: 22px; background: light-dark(#fafafa, #202024); }
+    #acemode-desktop-prototype .am-export-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid light-dark(#e6e6e9, #313137); font-size: 12px; }
+    #acemode-desktop-prototype .am-export-row:last-child { border-bottom: 0; }
+    #acemode-desktop-prototype .am-action { border: 0; border-radius: 9px; background: #6d56e8; color: white; padding: 9px 12px; font-weight: 650; font-size: 11px; }
+    #acemode-desktop-prototype .am-secondary { border: 1px solid light-dark(#dedee2, #3b3b43); border-radius: 9px; background: transparent; color: inherit; padding: 8px 11px; font-size: 11px; }
+    #acemode-desktop-prototype .am-toast { position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%) translateY(10px); opacity: 0; pointer-events: none; z-index: 20; padding: 9px 14px; border-radius: 9px; background: #26262c; color: white; font-size: 11px; box-shadow: 0 12px 32px rgba(0,0,0,.25); transition: .18s ease; }
+    #acemode-desktop-prototype .am-toast[data-show="true"] { opacity: 1; transform: translateX(-50%) translateY(0); }
+    @media (max-width: 980px) {
+      #acemode-desktop-prototype .am-app { grid-template-columns: 190px minmax(420px,1fr); }
+      #acemode-desktop-prototype .am-inspector { display: none; }
+      #acemode-desktop-prototype .am-titlebar { grid-template-columns: 150px 1fr 150px; }
+    }
+    @media (max-width: 720px) {
+      #acemode-desktop-prototype { padding: 0; }
+      #acemode-desktop-prototype .am-window { border-radius: 0; min-height: 800px; }
+      #acemode-desktop-prototype .am-app { grid-template-columns: 1fr; }
+      #acemode-desktop-prototype .am-sidebar { display: none; }
+      #acemode-desktop-prototype .am-titlebar { grid-template-columns: 80px 1fr 80px; }
+      #acemode-desktop-prototype .am-system span:last-child { display: none; }
+      #acemode-desktop-prototype .am-worktop { align-items: flex-start; flex-direction: column; gap: 7px; }
+      #acemode-desktop-prototype .am-record-layout,
+      #acemode-desktop-prototype .am-review-layout { grid-template-columns: 1fr; }
+      #acemode-desktop-prototype .am-session-side { border-left: 0; border-top: 1px solid light-dark(#e5e5e8, #303036); }
+      #acemode-desktop-prototype .am-camera { min-height: 350px; }
+      #acemode-desktop-prototype .am-stage-sep { display: none; }
+    }
+  </style>
+
+  <section class="am-window" aria-label="AceMode 桌面客户端原型">
+    <header class="am-titlebar">
+      <div class="am-lights" aria-hidden="true"><span class="am-light"></span><span class="am-light"></span><span class="am-light"></span></div>
+      <div class="am-title">AceMode · 创作工作台</div>
+      <div class="am-system"><span><i class="am-dot"></i>本地已保存</span><span><i class="am-dot"></i>AI 服务在线</span></div>
+    </header>
+    <div class="am-app">
+      <aside class="am-sidebar">
+        <div class="am-brand"><span class="am-logo">A</span><span>AceMode</span></div>
+        <button class="am-new" type="button" data-action="new-project">＋ 新建内容</button>
+        <div class="am-side-label">最近作品</div>
+        <div data-projects>
+          <button class="am-project" type="button" aria-current="true" data-project="远程协作为什么总在返工？"><strong>远程协作为什么总在返工？</strong><small>备稿中 · 刚刚</small></button>
+          <button class="am-project" type="button" aria-current="false" data-project="AI 工具不是越多越好"><strong>AI 工具不是越多越好</strong><small>待审片 · 昨天</small></button>
+          <button class="am-project" type="button" aria-current="false" data-project="我的第一年独立开发复盘"><strong>我的第一年独立开发复盘</strong><small>已导出 · 10 月 8 日</small></button>
+        </div>
+        <div class="am-side-bottom">
+          <button class="am-library" type="button" data-action="library">▣ 作品与原片</button>
+          <button class="am-library" type="button" data-action="settings">⚙ 设置与设备</button>
+          <div class="am-profile"><span class="am-avatar">陈</span><span><strong>陈默</strong><br><small>个人工作区</small></span></div>
+        </div>
+      </aside>
+
+      <main class="am-center">
+        <div class="am-worktop">
+          <div class="am-workname"><strong data-project-title>远程协作为什么总在返工？</strong><small data-save-text>草稿 v3 · 12 秒前保存</small></div>
+          <nav class="am-stages" aria-label="创作步骤">
+            <button class="am-stage" type="button" aria-selected="true" data-stage="prepare">1 准备内容</button><span class="am-stage-sep"></span>
+            <button class="am-stage" type="button" aria-selected="false" data-stage="record">2 录制</button><span class="am-stage-sep"></span>
+            <button class="am-stage" type="button" aria-selected="false" data-stage="review">3 审片</button><span class="am-stage-sep"></span>
+            <button class="am-stage" type="button" aria-selected="false" data-stage="export">4 导出</button>
+          </nav>
+        </div>
+        <div class="am-stage-body" data-stage-body></div>
+      </main>
+
+      <aside class="am-inspector">
+        <div class="am-inspector-head"><strong>当前内容</strong><small>编辑发生在产物上，而不是藏在聊天记录里</small></div>
+        <div class="am-tabs" role="tablist">
+          <button class="am-tab" type="button" role="tab" aria-selected="true" data-tab="script">稿件</button>
+          <button class="am-tab" type="button" role="tab" aria-selected="false" data-tab="questions">问题单</button>
+          <button class="am-tab" type="button" role="tab" aria-selected="false" data-tab="sources">来源</button>
+        </div>
+        <div class="am-document" data-document></div>
+        <button class="am-confirm" type="button" data-action="confirm-script">确认此版本并去录制</button>
+      </aside>
+    </div>
+  </section>
+  <div class="am-toast" role="status" aria-live="polite" data-toast></div>
+
+  <script>
+    (() => {
+      const root = document.getElementById('acemode-desktop-prototype');
+      const stageBody = root.querySelector('[data-stage-body]');
+      const documentPanel = root.querySelector('[data-document]');
+      const toast = root.querySelector('[data-toast]');
+      const state = { stage: 'prepare', tab: 'script', recording: false, question: 0, confirmed: false, reviewed: false, project: '远程协作为什么总在返工？' };
+      const questions = ['为什么远程协作最容易在交付前返工？', '你会怎样把“完成标准”写得更清楚？', '给刚开始远程协作的团队一个建议。'];
+
+      function notify(text) {
+        toast.textContent = text;
+        toast.dataset.show = 'true';
+        clearTimeout(notify.timer);
+        notify.timer = setTimeout(() => { toast.dataset.show = 'false'; }, 1900);
+      }
+
+      function renderDocument() {
+        if (state.tab === 'script') {
+          documentPanel.innerHTML = `
+            <div class="am-section-label"><span>标题</span><span class="am-status"><i class="am-dot"></i>已保存</span></div>
+            <h3>远程协作为什么总在返工？</h3>
+            <div class="am-section-label"><span>开场</span></div>
+            <p>很多团队以为远程协作的问题是沟通太少，但真正造成返工的，往往是我们从来没有把“什么叫完成”说清楚。</p>
+            <div class="am-section-label"><span>核心观点</span></div>
+            <p>把任务从“要做什么”改写成“交付什么、谁来验收、出现什么证据才算完成”，能显著减少反复确认。</p>
+            <div class="am-section-label"><span>结尾</span></div>
+            <p>下一次分配任务前，先试着补上一句：完成时，我会看到什么？</p>`;
+        } else if (state.tab === 'questions') {
+          documentPanel.innerHTML = `<div class="am-section-label"><span>主持问题 · 3 题</span><span>约 4 分钟</span></div>${questions.map((q, i) => `<div class="am-question"><span class="am-qnum">${i + 1}</span><span>${q}</span></div>`).join('')}<p style="margin-top:16px">主持人只按已确认问题提问。一期不自动自由追问。</p>`;
+        } else {
+          documentPanel.innerHTML = `
+            <div class="am-section-label"><span>事实与来源</span></div>
+            <div class="am-question"><span class="am-qnum">✓</span><span>内容以个人经验和团队实践为主，没有引用外部数字。</span></div>
+            <div class="am-question"><span class="am-qnum">!</span><span>“显著减少返工”是观点表达，发布前建议改为非量化措辞。</span></div>
+            <p style="margin-top:16px">缺少来源时保持“待核验”，不会由模型自动补造链接。</p>`;
+        }
+      }
+
+      function prepareView() {
+        return `
+          <div class="am-thread">
+            <div class="am-kicker">内容准备</div>
+            <h1 class="am-heading">先把想说的话理清楚，再打开摄像头。</h1>
+            <p class="am-lead">告诉我主题、听众和你真正想表达的观点。我会把建议直接整理进右侧稿件，你可以随时修改和确认。</p>
+            <div class="am-message" data-role="user"><div class="am-message-icon">你</div><div class="am-message-content">我想讲讲远程协作为什么总在返工，听众是产品和技术团队。不要讲大道理，最好有一个具体方法。</div></div>
+            <div class="am-message" data-role="ai"><div class="am-message-icon">A</div><div class="am-message-content"><strong>我先整理成一条 4 分钟内容。</strong>重点不放在“多沟通”，而是放在如何把模糊任务改写成可验收交付。右侧已经生成稿件和 3 个主持问题。
+              <div class="am-draft-summary"><div class="am-draft-row"><span>切入点</span><span>返工往往不是执行问题，而是完成标准没有被说清楚。</span></div><div class="am-draft-row"><span>具体方法</span><span>每个任务写清交付物、验收人和完成证据。</span></div><div class="am-draft-row"><span>表达方式</span><span>个人经验，不引用未经核实的数据。</span></div></div>
+            </div></div>
+            <div class="am-suggestions"><button class="am-suggestion" type="button" data-suggest="增加一个失败案例">增加一个失败案例</button><button class="am-suggestion" type="button" data-suggest="语气再口语一点">语气再口语一点</button><button class="am-suggestion" type="button" data-suggest="压缩到 3 分钟">压缩到 3 分钟</button></div>
+          </div>
+          <div class="am-composer-wrap"><div class="am-composer"><textarea aria-label="继续修改内容" placeholder="告诉 AceMode 你想怎样修改……"></textarea><div class="am-compose-actions"><small>⌘ Enter 发送 · 改动先预览，再写入稿件</small><button class="am-send" type="button" data-action="send">↑</button></div></div></div>`;
+      }
+
+      function recordView() {
+        return `<div class="am-record-layout"><section class="am-camera-zone"><div class="am-camera"><div class="am-rec-badge"><i></i>${state.recording ? '录制中 00:42' : '准备就绪'}</div><div class="am-save-badge">✓ ${state.recording ? '边录边保存' : '设备预检通过'}</div><div class="am-camera-person"><div>人</div><span>真人画面预览</span></div><div class="am-prompt"><small>问题 ${state.question + 1} / ${questions.length} · AI 主持</small><strong>${questions[state.question]}</strong></div></div><div class="am-record-controls"><button type="button" data-action="repeat">重复问题</button><button class="am-record-main" type="button" data-action="toggle-record">${state.recording ? '完成这段回答' : '开始回答'}</button><button type="button" data-action="retake">重来本题</button><button type="button" data-action="next-question">下一题</button></div></section><aside class="am-session-side"><h3>录制状态</h3><div class="am-check"><span>摄像头</span><span>可用</span></div><div class="am-check"><span>麦克风</span><span>输入正常</span></div><div class="am-check"><span>保存位置</span><span>可写</span></div><div class="am-check"><span>主持连接</span><span>在线</span></div><div class="am-queue"><h3>问题单</h3>${questions.map((q, i) => `<div class="am-queue-item" data-current="${i === state.question}">${i + 1}. ${q}</div>`).join('')}</div></aside></div>`;
+      }
+
+      function reviewView() {
+        return `<div class="am-review-layout"><section><div class="am-player"><button class="am-play" type="button" data-action="play">▶</button><div class="am-caption">把任务从“要做什么”，改写成“完成时会看到什么”。</div></div><div class="am-timeline"><button class="am-clip" type="button">Q1 · Take 2</button><button class="am-clip" type="button">Q2 · Take 1</button><button class="am-clip" type="button">Q3 · Take 2</button></div></section><aside class="am-review-side"><h3>回答片段</h3><div class="am-take" data-selected="true"><strong>Q1 · Take 2</strong><br><small>00:48 · 当前采用</small></div><div class="am-take"><strong>Q1 · Take 1</strong><br><small>00:55 · 原片保留</small></div><div class="am-take" data-selected="true"><strong>Q2 · Take 1</strong><br><small>01:12 · 当前采用</small></div><div class="am-take" data-selected="true"><strong>Q3 · Take 2</strong><br><small>00:39 · 当前采用</small></div><button class="am-action" type="button" data-action="approve" style="width:100%;margin-top:16px">${state.reviewed ? '✓ 当前版本已确认' : '确认成片版本'}</button></aside></div>`;
+      }
+
+      function exportView() {
+        return `<div class="am-export-layout"><div class="am-kicker">导出</div><h1 class="am-heading">成片准备好了，由你决定何时发布。</h1><p class="am-lead">导出不会自动上传，也不等于授权发布。所有文件都保留对应的稿件、录制和审核版本。</p><div class="am-export-box"><div class="am-export-row"><span><strong>video.mp4</strong><br><small>1080p · H.264 · 03:46</small></span><span class="am-status"><i class="am-dot"></i>已生成</span></div><div class="am-export-row"><span><strong>captions.srt</strong><br><small>中文字幕 · 已人工检查专名</small></span><span class="am-status"><i class="am-dot"></i>已生成</span></div><div class="am-export-row"><span><strong>copy.md</strong><br><small>标题、简介与标签草稿</small></span><button class="am-secondary" type="button" data-action="edit-copy">编辑文案</button></div><div class="am-export-row"><span><strong>项目清单</strong><br><small>版本关系与文件校验信息</small></span><button class="am-action" type="button" data-action="export">导出到本地…</button></div></div></div>`;
+      }
+
+      function renderStage() {
+        root.querySelectorAll('[data-stage]').forEach(btn => btn.setAttribute('aria-selected', String(btn.dataset.stage === state.stage)));
+        stageBody.innerHTML = state.stage === 'prepare' ? prepareView() : state.stage === 'record' ? recordView() : state.stage === 'review' ? reviewView() : exportView();
+        bindDynamic();
+      }
+
+      function setStage(stage) {
+        state.stage = stage;
+        const confirmButton = root.querySelector('[data-action="confirm-script"]');
+        confirmButton.textContent = state.confirmed ? '✓ 内容 v3 已冻结' : '确认此版本并去录制';
+        confirmButton.disabled = state.confirmed;
+        confirmButton.style.opacity = state.confirmed ? '.62' : '1';
+        renderStage();
+        if (stage === 'prepare') renderDocument();
+      }
+
+      function bindDynamic() {
+        root.querySelectorAll('[data-suggest]').forEach(btn => btn.addEventListener('click', () => notify(`已生成“${btn.dataset.suggest}”的修改建议`)));
+        root.querySelector('[data-action="send"]')?.addEventListener('click', () => {
+          const input = root.querySelector('.am-composer textarea');
+          if (!input.value.trim()) return notify('先写下你想修改的内容');
+          notify('已生成修改建议，等待你确认'); input.value = '';
+        });
+        root.querySelector('[data-action="toggle-record"]')?.addEventListener('click', () => {
+          if (!state.confirmed) return notify('请先确认右侧内容版本，再开始录制');
+          state.recording = !state.recording;
+          renderStage();
+          notify(state.recording ? '开始录制，本地分段保存中' : '回答已保存为候选 Take');
+        });
+        root.querySelector('[data-action="next-question"]')?.addEventListener('click', () => { state.recording = false; state.question = Math.min(questions.length - 1, state.question + 1); renderStage(); });
+        root.querySelector('[data-action="repeat"]')?.addEventListener('click', () => notify('正在重复当前问题'));
+        root.querySelector('[data-action="retake"]')?.addEventListener('click', () => notify('已创建新 Take，旧回答仍然保留'));
+        root.querySelector('[data-action="play"]')?.addEventListener('click', () => notify('播放成片预览'));
+        root.querySelector('[data-action="approve"]')?.addEventListener('click', () => { state.reviewed = true; renderStage(); notify('当前成片版本已确认'); });
+        root.querySelector('[data-action="edit-copy"]')?.addEventListener('click', () => notify('已打开发布文案编辑区'));
+        root.querySelector('[data-action="export"]')?.addEventListener('click', () => notify('已选择本地导出目录'));
+      }
+
+      root.querySelectorAll('[data-stage]').forEach(btn => btn.addEventListener('click', () => setStage(btn.dataset.stage)));
+      root.querySelectorAll('[data-tab]').forEach(btn => btn.addEventListener('click', () => {
+        state.tab = btn.dataset.tab;
+        root.querySelectorAll('[data-tab]').forEach(tab => tab.setAttribute('aria-selected', String(tab === btn)));
+        renderDocument();
+      }));
+      root.querySelectorAll('[data-project]').forEach(btn => btn.addEventListener('click', () => {
+        root.querySelectorAll('[data-project]').forEach(item => item.setAttribute('aria-current', String(item === btn)));
+        state.project = btn.dataset.project;
+        root.querySelector('[data-project-title]').textContent = state.project;
+        notify(`已切换到：${state.project}`);
+      }));
+      root.querySelector('[data-action="confirm-script"]').addEventListener('click', () => { state.confirmed = true; setStage('record'); notify('内容 v3 已冻结，可以开始录制'); });
+      root.querySelector('[data-action="new-project"]').addEventListener('click', () => notify('新建内容：从一句想法开始'));
+      root.querySelector('[data-action="library"]').addEventListener('click', () => notify('作品与原片是全局入口，不占用主创作流程'));
+      root.querySelector('[data-action="settings"]').addEventListener('click', () => notify('设备与保存设置将在独立页面打开'));
+
+      renderDocument();
+      renderStage();
+    })();
+  </script>
+</div>
+</body>
+</html>
