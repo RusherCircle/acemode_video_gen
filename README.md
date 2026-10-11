@@ -23,6 +23,26 @@ AceMode 是一个面向个人创作者的 AI 辅助视频生产桌面工作台�
 
 直接使用浏览器打开该文件即可体验。原型只用于验证信息架构和交互，不会访问摄像头、麦克风或云端服务，也不会生成真实视频。
 
+## 本地开发
+
+环境要求：Node.js 22 或更高版本、npm 10 或更高版本。
+
+```bash
+npm install
+npm run dev
+```
+
+常用检查命令：
+
+```bash
+npm run typecheck
+npm test
+npm run build
+npm run check
+```
+
+`npm run dev` 会启动 Vite 开发服务和 Electron 窗口。当前版本只实现产品界面、领域状态规则和扩展接口边界，不访问真实摄像头、麦克风或第三方服务。
+
 ## 产品形态
 
 AceMode 采用“桌面客户端 + 可选云端 AI 服务”的形式：
